@@ -15,7 +15,7 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        "/api/auth/login",
+        "https://verf4zj35n5ny7yrezxyrhr3ie0vmmlb.lambda-url.eu-north-1.on.aws",
         {
           method: "POST",
           headers: {
