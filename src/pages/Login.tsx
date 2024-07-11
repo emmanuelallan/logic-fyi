@@ -27,8 +27,8 @@ const Login = () => {
       );
 
       if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("token", data.token); // store in local storage for the sake of refresh despite the security risk
+        const token = await response.headers.getSetCookie();
+        localStorage.setItem("token", token[0].split("=")[1]); // store in local storage for the sake of refresh despite the security risk
         navigate("/dashboard");
       } else {
         const errorData = await response.json();
