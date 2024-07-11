@@ -5,14 +5,19 @@ const Dashboard = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const getTokenFromCookies = () => {
-      const tokenCookie = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="));
-      return tokenCookie ? tokenCookie.split("=")[1] : null;
+    // const getTokenFromCookies = () => {
+    //   const tokenCookie = document.cookie
+    //     .split("; ")
+    //     .find((row) => row.startsWith("token="));
+    //   return tokenCookie ? tokenCookie.split("=")[1] : null;
+    // };
+
+    const getTokenFromLocalStorage = () => {
+      const token = localStorage.getItem("token");
+      return token;
     };
 
-    const token = getTokenFromCookies();
+    const token = getTokenFromLocalStorage();
     if (token) {
       try {
         const base64Url = token.split(".")[1];
