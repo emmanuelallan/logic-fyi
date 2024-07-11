@@ -47,7 +47,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen min-h-full flex-1 flex-col items-center justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="sm:mx-auto sm:w-full sm:max-w-5xl">
         {error && (
           <p className="text-red-500 text-center font-bold font-mono shadow py-5 rounded-2xl">
             {error}
