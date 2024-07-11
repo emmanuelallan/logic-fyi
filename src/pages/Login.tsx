@@ -15,7 +15,7 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        "https://verf4zj35n5ny7yrezxyrhr3ie0vmmlb.lambda-url.eu-north-1.on.aws",
+        "https://74okyihghcmqgb3jkb4pcbpqmy0dbbae.lambda-url.eu-north-1.on.aws",
         {
           method: "POST",
           headers: {
@@ -27,8 +27,8 @@ const Login = () => {
       );
 
       if (response.ok) {
-        const token = await response.headers.getSetCookie();
-        localStorage.setItem("token", token[0].split("=")[1]); // store in local storage for the sake of refresh despite the security risk
+        const data = await response.json();
+        localStorage.setItem("token", data?.token); // store in local storage for the sake of refresh despite the security risk
         navigate("/dashboard");
       } else {
         const errorData = await response.json();
