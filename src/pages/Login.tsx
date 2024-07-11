@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import axios from "axios";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -15,30 +15,29 @@ const Login: React.FC = () => {
     }
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "https://74okyihghcmqgb3jkb4pcbpqmy0dbbae.lambda-url.eu-north-1.on.aws",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ username, password }),
-        },
+        { username, password },
+        { withCredentials: true },
       );
 
-      if (response.ok) {
-        const token = Cookies.get("token");
+      if (response.status === 200) {
+        const cookies = response.headers["set-cookie"];
 
-        if (token) {
-          sessionStorage.setItem("token", token); // insecure but refresh clears my token for some reason
-          navigate("/dashboard");
+        if (cookies) {
+          const token = cookies.find((cookie) => cookie.startsWith("token="));
+          if (token) {
+            const tokenValue = token.split(";")[0].split("=")[1];
+            sessionStorage.setItem("token", tokenValue);
+            navigate("/dashboard");
+          } else {
+            setError("Login successful but no token found");
+          }
         } else {
-          setError("Login successful but no token found");
+          setError("Login successful but no cookies found");
         }
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Invalid credentials");
+        setError("Invalid credentials");
       }
     } catch (error) {
       setError("An unexpected error occurred. Please try again later.");

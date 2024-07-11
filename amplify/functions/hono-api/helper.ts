@@ -1,16 +1,25 @@
 import { Hono } from "hono";
 import { setCookie } from "hono/cookie";
-import { sign } from "hono/jwt";
 import { handle } from "hono/aws-lambda";
+import { cors } from "hono/cors";
 
 const app = new Hono();
-const JWT_SECRET = "thisIsASecretKey";
 
-app.get("/api", async (c) => {
+app.use(
+  "*",
+  cors({
+    origin: "https://main.d3ce0cc7ut3ws9.amplifyapp.com",
+    allowHeaders: ["Content-Type", "x-tenantid"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    credentials: true,
+  }),
+);
+
+app.get("/", async (c) => {
   return c.json({ status: "ok" });
 });
 
-app.post("/api/auth/login", async (c) => {
+app.post("/", async (c) => {
   try {
     const { username, password } = await c.req.json();
 
@@ -28,35 +37,12 @@ app.post("/api/auth/login", async (c) => {
       },
     );
 
-    const data = await response.json();
+    const { access_token } = await response.json();
 
     if (response.ok) {
-      const token = await sign(
-        {
-          sub: username,
-          role: "user",
-          exp: Math.floor(Date.now() / 1000) + 60 * 60,
-          cd_identityUsuario: 425,
-          nb_nombreUsuario: "CARLOS MARQUEZ",
-          Idioma: "EnUs",
-          cd_identityPaisUsuario: 56,
-          nb_paisUsuario: "GERMANY",
-          tx_acronimoPais: "DE",
-          cd_identitySucursalUsuario: 20,
-          nb_sucursalUsuario_sucursal: "HAMBURG",
-          CulturaUsuario: "en-US",
-          ZonaHorarioaUsuario: "W. Europe Standard Time",
-          st_estatus: "S",
-          url_soporte:
-            "https://master.d175pxy0e5rn7y.amplifyapp.com/en/docs-tutorials",
-          cliente: "SchryverPruebas",
-        },
-        JWT_SECRET,
-      );
-
-      setCookie(c, "token", token, {
-        httpOnly: false,
-        secure: false,
+      setCookie(c, "token", access_token, {
+        httpOnly: true,
+        secure: true,
         sameSite: "Lax",
         path: "/",
       });
@@ -64,7 +50,7 @@ app.post("/api/auth/login", async (c) => {
       return c.json({ message: "Login successful" });
     } else {
       return c.json(
-        { message: data.message || "Invalid credentials" },
+        { message: "Invalid credentials" },
         { status: response.status },
       );
     }

@@ -12,7 +12,7 @@ const Dashboard = () => {
     //   return tokenCookie ? tokenCookie.split("=")[1] : null;
     // };
 
-    const getTokenFromLocalStorage = () => {
+    const getTokenFromSessionStorage = () => {
       const token = sessionStorage.getItem("token");
       return token;
     };
@@ -33,7 +33,7 @@ const Dashboard = () => {
       return JSON.parse(jsonPayload);
     }
 
-    const token = getTokenFromLocalStorage();
+    const token = getTokenFromSessionStorage();
     if (token) {
       try {
         setTokenData(parseJwt(token));
