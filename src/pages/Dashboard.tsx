@@ -13,7 +13,7 @@ const Dashboard = () => {
     // };
 
     const getTokenFromLocalStorage = () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       return token;
     };
 
@@ -46,16 +46,22 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div>
-      {error && <p className="text-red-500">{error}</p>}
-      {tokenData && (
-        <div>
-          <h1 className="my-5 text-center text-2xl font-bold">Dashboard</h1>
-          <pre className="mx-auto max-w-4xl rounded-3xl border-2 border-gray-200 p-6 font-mono shadow">
-            {JSON.stringify(tokenData, null, 2)}
-          </pre>
-        </div>
-      )}
+    <div className="flex h-screen min-h-full flex-1 flex-col items-center justify-center px-6 py-12 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        {error && (
+          <p className="text-red-500 text-center font-bold font-mono shadow py-5 rounded-2xl">
+            {error}
+          </p>
+        )}
+        {tokenData && (
+          <div>
+            <h1 className="my-5 text-center text-2xl font-bold">Dashboard</h1>
+            <pre className="mx-auto max-w-4xl rounded-3xl border-2 border-gray-200 p-6 font-mono shadow">
+              {JSON.stringify(tokenData, null, 2)}
+            </pre>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

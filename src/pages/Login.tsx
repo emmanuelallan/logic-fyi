@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
-const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+const Login: React.FC = () => {
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -27,9 +28,14 @@ const Login = () => {
       );
 
       if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("token", data?.token); // store in local storage for the sake of refresh despite the security risk
-        navigate("/dashboard");
+        const token = Cookies.get("token");
+
+        if (token) {
+          sessionStorage.setItem("token", token); // insecure but refresh clears my token for some reason
+          navigate("/dashboard");
+        } else {
+          setError("Login successful but no token found");
+        }
       } else {
         const errorData = await response.json();
         setError(errorData.message || "Invalid credentials");
